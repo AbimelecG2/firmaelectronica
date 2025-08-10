@@ -1,0 +1,92 @@
+ mobile-first
+.layout-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 100%;
+  background-color: #003865;
+  color: white;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+
+  .logo {
+    text-align: center;
+    margin-bottom: 1rem;
+
+    .logo-img {
+      width: 80px;
+    }
+
+    .logo-text {
+      font-size: 1.2rem;
+      margin: 0.5rem 0;
+    }
+  }
+
+  .user-info {
+    text-align: center;
+    margin-bottom: 1.5rem;
+
+    .avatar {
+      border-radius: 50%;
+      width: 40px;
+      margin-bottom: 0.5rem;
+    }
+
+    .user-name {
+      font-size: 1rem;
+      margin: 0;
+    }
+  }
+
+  nav {
+    aria-label: "Navegación principal";
+
+    .nav-list {
+      list-style: none;
+      padding: 0;
+
+      li {
+        margin: 1rem 0;
+
+        a {
+          color: white;
+          text-decoration: none;
+          font-size: 1rem;
+          display: flex;
+          align-items: center;
+
+          i {
+            margin-right: 0.5rem;
+          }
+
+          &:hover,
+          &:focus {
+            color: #fdd26e;
+            outline: none;
+          }
+        }
+      }
+    }
+  }
+}
+
+.main-content {
+  flex: 1;
+  padding: 1rem;
+  background-color: #f5f5f5;
+}
+
+
+@media (min-width: 768px) {
+  .sidebar {
+    width: 250px;
+  }
+
+  .main-content {
+    padding: 2rem;
+  }
+}

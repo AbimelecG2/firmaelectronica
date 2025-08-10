@@ -1,0 +1,31 @@
+<div class="flex min-h-screen" role="main">
+  <!-- Sidebar -->
+  <aside class="w-64 flex-shrink-0 border-r border-gray-200 bg-[#003865]" role="complementary" aria-label="Menú de navegación">
+    <div class="p-4 border-b">
+      <img src="assets/firma-digital-logo.png" alt="Logo de Firma Digital" class="w-32 mx-auto">
+    </div>
+
+    <div class="p-4 border-b flex flex-col items-center">
+      <img src="assets/avatar.png" alt="Avatar de usuario" class="w-16 h-16 rounded-full mb-2">
+      <p class="text-[#FDD26E] font-medium">Abimelec Garcia</p>
+    </div>
+
+    <nav class="p-4">
+      <ul class="space-y-2">
+        <li><a routerLink="/home" class="flex items-center gap-2 text-white hover:text-[#FDD26E]"><i class="fas fa-home"></i> Inicio</a></li>
+        <li><a routerLink="/sobre" class="flex items-center gap-2 text-white hover:text-[#FDD26E]"><i class="fas fa-info-circle"></i> Sobre</a></li>
+        <li><a routerLink="/firmantes" class="flex items-center gap-2 text-white hover:text-[#FDD26E]"><i class="fas fa-users"></i> Firmantes</a></li>
+        <li><a routerLink="/reportes" class="flex items-center gap-2 text-white hover:text-[#FDD26E]"><i class="fas fa-chart-bar"></i> Reportes</a></li>
+        <li><a routerLink="/analisis" class="flex items-center gap-2 text-white hover:text-[#FDD26E]"><i class="fas fa-chart-line"></i> Análisis</a></li>
+        <li><a routerLink="/usuarios" class="flex items-center gap-2 text-white hover:text-[#FDD26E]"><i class="fas fa-user"></i> Usuarios</a></li>
+        <li><a routerLink="/ajustes" class="flex items-center gap-2 text-white hover:text-[#FDD26E]"><i class="fas fa-cog"></i> Ajustes</a></li>
+        <li><a routerLink="/ayuda" class="flex items-center gap-2 text-white hover:text-[#FDD26E]"><i class="fas fa-question-circle"></i> Ayuda</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+
+  <main class="flex-1 p-6 bg-gray-50 overflow-auto" role="main" aria-label="Contenido principal">
+    <router-outlet></router-outlet>
+  </main>
+</div>
