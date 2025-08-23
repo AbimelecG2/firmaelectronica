@@ -74,6 +74,12 @@
   }
 }
 
+a:focus-visible {
+  outline: 2px solid #FDD26E;
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
 .main-content {
   flex: 1;
   padding: 1rem;

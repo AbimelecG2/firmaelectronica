@@ -6,24 +6,47 @@
     </div>
 
     <div class="p-4 border-b flex flex-col items-center">
-      <img src="assets/avatar.png" alt="Avatar de usuario" class="w-16 h-16 rounded-full mb-2">
-      <p class="text-[#FDD26E] font-medium">Abimelec Garcia</p>
+      <!-- Foto dinámica -->
+      <img [src]="photoURL" alt="Avatar de usuario" class="w-16 h-16 rounded-full mb-2 object-cover">
+      <!-- Nombre dinámico -->
+      <p class="text-[#FDD26E] font-medium">{{ userName }}</p>
     </div>
 
-    <nav class="p-4">
+    <nav class="p-4" aria-label="Navegación principal">
       <ul class="space-y-2">
-        <li><a routerLink="/home" class="flex items-center gap-2 text-white hover:text-[#FDD26E]"><i class="fas fa-home"></i> Inicio</a></li>
-        <li><a routerLink="/sobre" class="flex items-center gap-2 text-white hover:text-[#FDD26E]"><i class="fas fa-info-circle"></i> Sobre</a></li>
-        <li><a routerLink="/firmantes" class="flex items-center gap-2 text-white hover:text-[#FDD26E]"><i class="fas fa-users"></i> Firmantes</a></li>
-        <li><a routerLink="/reportes" class="flex items-center gap-2 text-white hover:text-[#FDD26E]"><i class="fas fa-chart-bar"></i> Reportes</a></li>
-        <li><a routerLink="/analisis" class="flex items-center gap-2 text-white hover:text-[#FDD26E]"><i class="fas fa-chart-line"></i> Análisis</a></li>
-        <li><a routerLink="/usuarios" class="flex items-center gap-2 text-white hover:text-[#FDD26E]"><i class="fas fa-user"></i> Usuarios</a></li>
-        <li><a routerLink="/ajustes" class="flex items-center gap-2 text-white hover:text-[#FDD26E]"><i class="fas fa-cog"></i> Ajustes</a></li>
-        <li><a routerLink="/ayuda" class="flex items-center gap-2 text-white hover:text-[#FDD26E]"><i class="fas fa-question-circle"></i> Ayuda</a></li>
+        <li *ngFor="let item of menu">
+          <!-- Enlaces de navegación -->
+          <ng-container *ngIf="!item.action; else logoutTpl">
+            <a
+              [routerLink]="item.route"
+              routerLinkActive="bg-[#FDD26E] text-[#003865] font-semibold"
+              #rla="routerLinkActive"
+              [routerLinkActiveOptions]="item.exact ? { exact: true } : { exact: false }"
+              class="group flex items-center gap-2 text-white hover:text-[#FDD26E] hover:bg-[#0b4d79] rounded-md px-3 py-2 transition-colors outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#FDD26E] focus:ring-offset-[#003865]"
+              [attr.aria-current]="rla.isActive ? 'page' : null"
+            >
+              <i class="{{ item.icon }} group-hover:text-[#FDD26E]"></i>
+              <span class="truncate">{{ item.label }}</span>
+            </a>
+          </ng-container>
+
+          <!-- Botón de Cerrar sesión -->
+          <ng-template #logoutTpl>
+            <button
+              type="button"
+              (click)="onLogout()"
+              class="group w-full text-left flex items-center gap-2 text-white hover:text-[#FDD26E] hover:bg-[#0b4d79] rounded-md px-3 py-2 transition-colors outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#FDD26E] focus:ring-offset-[#003865]"
+              aria-label="Cerrar sesión"
+              title="Cerrar sesión"
+            >
+              <i class="{{ item.icon }} group-hover:text-[#FDD26E]"></i>
+              <span class="truncate">{{ item.label }}</span>
+            </button>
+          </ng-template>
+        </li>
       </ul>
     </nav>
   </aside>
-
 
   <main class="flex-1 p-6 bg-gray-50 overflow-auto" role="main" aria-label="Contenido principal">
     <router-outlet></router-outlet>

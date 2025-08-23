@@ -1,0 +1,140 @@
+<section aria-labelledby="ayuda-title" class="max-w-7xl mx-auto">
+  <header class="mb-6">
+    <h1 id="ayuda-title" class="text-3xl font-semibold text-[#003865]">
+      Ayuda
+    </h1>
+    <div
+      aria-hidden="true"
+      class="h-px bg-[#ffd26e] rounded-full mt-2 mb-4 w-full"
+    ></div>
+    <p class="text-gray-600">
+      Plataforma de Firma digital. Aquí encontrarás manuales y recursos de
+      apoyo. ¿Dudas? Escríbenos a
+      <a
+        class="text-[#00C1D4] underline hover:no-underline"
+        [href]="'mailto:' + supportEmail"
+        >{{ supportEmail }}</a
+      >.
+    </p>
+  </header>
+
+  <!-- Estado de carga / error -->
+  <div *ngIf="loading" class="py-12 text-center text-gray-500">
+    Cargando manuales…
+  </div>
+  <div *ngIf="!loading && error" class="py-6 text-red-600">{{ error }}</div>
+
+  <!-- Grid de cards -->
+  <div
+    *ngIf="!loading && !error"
+    class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6"
+  >
+    <article
+      *ngFor="let m of manuals; trackBy: trackByFile"
+      class="flex flex-col items-center gap-4 bg-white rounded-2xl p-6 shadow-[0_10px_10px_-5px_rgba(0,0,0,0.15)] border border-[#00C1D4]"
+      role="group"
+      [attr.aria-label]="m.displayName"
+    >
+      <div
+        class="w-16 h-16 flex items-center justify-center rounded-full bg-[#E6F3F5]"
+      >
+        <i class="fa-solid fa-file-lines text-3xl" style="color: #003865"></i>
+      </div>
+
+      <h2 class="text-center text-[#003865] font-semibold line-clamp-2">
+        {{ m.displayName }}
+      </h2>
+
+      <div class="mt-auto flex w-full gap-3">
+        <!-- Visualizar -->
+        <button
+          type="button"
+          (click)="openModal(m)"
+          class="flex-1 py-2 rounded-lg bg-[#00C1D4] text-white font-medium hover:opacity-90 outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#00C1D4]"
+          aria-label="Visualizar"
+          title="Visualizar"
+        >
+          <i class="fa-solid fa-eye mr-2"></i> Visualizar
+        </button>
+
+        <!-- Descargar -->
+        <a
+          [href]="m.url"
+          target="_blank"
+          rel="noopener"
+          download
+          class="flex-1 text-center py-2 rounded-lg bg-[#FFB81C] text-white font-medium hover:opacity-90 outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#FFB81C]"
+          aria-label="Descargar"
+          title="Descargar"
+        >
+          <i class="fa-solid fa-download mr-2"></i> Descargar
+        </a>
+      </div>
+    </article>
+  </div>
+
+  <!-- Modal -->
+  <div
+    *ngIf="showModal"
+    class="fixed inset-0 z-50 flex items-center justify-center"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="modal-title"
+  >
+    <!-- Overlay -->
+    <div
+      class="absolute inset-0 bg-black/50"
+      (click)="closeModal()"
+      aria-hidden="true"
+    ></div>
+
+    <!-- Dialog -->
+    <div
+      class="relative bg-white w-[95vw] md:w-[80vw] h-[85vh] rounded-2xl shadow-xl border border-[#00C1D4] flex flex-col"
+    >
+      <header class="flex items-center justify-between p-4 border-b">
+        <h3 id="modal-title" class="text-lg font-semibold text-[#003865]">
+          {{ selectedDisplayName }}
+        </h3>
+        <button
+          type="button"
+          (click)="closeModal()"
+          class="p-2 rounded hover:bg-gray-100 outline-none focus:ring-2 focus:ring-[#00C1D4]"
+          aria-label="Cerrar visor"
+          title="Cerrar"
+        >
+          <i class="fa-solid fa-xmark text-xl"></i>
+        </button>
+      </header>
+
+      <div class="flex-1">
+        <iframe
+          *ngIf="selectedUrlSafe"
+          [src]="selectedUrlSafe"
+          title="Visor de documento"
+          class="w-full h-full"
+        ></iframe>
+      </div>
+
+      <footer class="p-4 border-t flex justify-end gap-3">
+        <a
+          *ngIf="selectedUrl"
+          [href]="selectedUrl"
+          target="_blank"
+          rel="noopener"
+          download
+          class="px-4 py-2 rounded-lg bg-[#FFB81C] text-white font-medium hover:opacity-90 outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#FFB81C]"
+        >
+          Descargar
+        </a>
+        <button
+          type="button"
+          (click)="closeModal()"
+          class="px-4 py-2 rounded-lg bg-gray-100 text-gray-800 font-medium hover:bg-gray-200 outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#00C1D4]"
+        >
+          Cerrar
+        </button>
+      </footer>
+    </div>
+  </div>
+</section>

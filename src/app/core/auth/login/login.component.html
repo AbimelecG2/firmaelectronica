@@ -13,36 +13,52 @@
       <h1 class="text-4xl font-bold text-white">Inicio de Sesión</h1>
     </div>
 
-    <!-- Centramos inputs y botón -->
-    <form (ngSubmit)="onLogin()" class="flex flex-col items-center space-y-5" role="form" aria-label="Formulario de inicio de sesión">
+    <!-- Formulario -->
+    <form (ngSubmit)="onLogin()" class="flex flex-col items-center space-y-5" role="form" aria-label="Formulario de inicio de sesión" novalidate>
       <div class="w-full max-w-sm">
-        <label for="username" class="sr-only">Usuario</label>
-        <input type="text" id="username" name="username" [(ngModel)]="username" placeholder="Usuario"
-               required aria-required="true"
-               class="w-full px-4 py-2 border text-white border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <label for="email" class="sr-only">Correo</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          [(ngModel)]="email"
+          placeholder="Correo"
+          required aria-required="true"
+          class="w-full px-4 py-2 border text-white border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
       </div>
 
       <div class="w-full max-w-sm">
         <label for="password" class="sr-only">Contraseña</label>
-        <input type="password" id="password" name="password" [(ngModel)]="password" placeholder="Contraseña"
-               required aria-required="true"
-               class="w-full px-4 py-2 border text-white border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <input
+          type="password"
+          id="password"
+          name="password"
+          [(ngModel)]="password"
+          placeholder="Contraseña"
+          required aria-required="true"
+          class="w-full px-4 py-2 border text-white border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
       </div>
 
       <div class="w-full max-w-sm">
-        <button type="submit" (click)="onLogin()"
+        <button type="submit"
                 class="w-full py-2 bg-[#FFB81C] hover:bg-[#FDD26E] text-white font-semibold rounded-lg transition">
           Ingresar
         </button>
       </div>
 
-      <a href="#" class="text-sm text-[#00C1D4] hover:underline">
+      <button type="button" (click)="onResetPassword()" class="text-sm text-[#00C1D4] hover:underline">
         Olvidé mi contraseña
-      </a>
+      </button>
     </form>
 
+    <!-- Mensajes -->
     <p *ngIf="errorMessage" class="mt-4 text-center text-red-500 text-sm" aria-live="polite">
       {{ errorMessage }}
+    </p>
+    <p *ngIf="infoMessage" class="mt-2 text-center text-green-200 text-sm" aria-live="polite">
+      {{ infoMessage }}
     </p>
   </div>
 </div>
