@@ -1,10 +1,105 @@
 <section aria-labelledby="sobres-title" class="max-w-6xl mx-auto">
   <header class="mb-6">
     <h1 id="sobres-title" class="text-3xl font-semibold text-[#003865]">Sobres</h1>
+        <div aria-hidden="true" class="h-px bg-[#FDD26E] mt-2 mb-6 w-full"></div>
     <p class="text-gray-600">Gestión y estado de los sobres.</p>
   </header>
 
-  <article class="bg-white p-4 rounded-lg shadow">
-    <p class="text-gray-700">Aquí irá el contenido de Sobres.</p>
-  </article>
+  <!-- Buscador -->
+  <div class="flex items-center gap-2 mb-4">
+    <input [(ngModel)]="searchTerm" (input)="applyFilters()"
+      placeholder="Buscar sobre..."
+      class="flex-1 px-3 py-2 border rounded-lg border-[#00C1D4] focus:outline-none focus:ring-2 focus:ring-[#00C1D4]" />
+    <button class="p-2 text-[#00C1D4]"><i class="fa fa-search"></i></button>
+  </div>
+
+  <!-- Controles -->
+  <div class="flex flex-wrap gap-2 mb-4">
+    <select [(ngModel)]="filterProceso" (change)="applyFilters()" class="px-2 py-1 rounded border">
+      <option value="">Proceso</option>
+      <option *ngFor="let p of procesos" [value]="p">{{p}}</option>
+    </select>
+    <select [(ngModel)]="filterRemitente" (change)="applyFilters()" class="px-2 py-1 rounded border">
+      <option value="">Remitente</option>
+      <option *ngFor="let r of remitentes" [value]="r">{{r}}</option>
+    </select>
+    <select [(ngModel)]="filterEstado" (change)="applyFilters()" class="px-2 py-1 rounded border">
+      <option value="">Estado</option>
+      <option *ngFor="let e of estados" [value]="e">{{e}}</option>
+    </select>
+    <select [(ngModel)]="filterFirma" (change)="applyFilters()" class="px-2 py-1 rounded border">
+      <option value="">Firma</option>
+      <option *ngFor="let f of firmas" [value]="f">{{f}}</option>
+    </select>
+
+    <!-- Filtro fechas -->
+    <input type="date" [(ngModel)]="startDate" (change)="applyFilters()" class="px-2 py-1 rounded border" />
+    <input type="date" [(ngModel)]="endDate" (change)="applyFilters()" class="px-2 py-1 rounded border" />
+
+    <!-- Botón quitar filtros -->
+    <button (click)="clearFilters()" class="px-3 py-1 rounded bg-gray-200 text-gray-800">Quitar filtros</button>
+
+    <!-- Exportaciones -->
+    <button (click)="exportPDF()" class="px-3 py-1 rounded bg-[#00C1D4] text-white">PDF</button>
+    <button (click)="exportXLSX()" class="px-3 py-1 rounded bg-[#FFB81C] text-white">Excel</button>
+    <button (click)="exportCSV()" class="px-3 py-1 rounded bg-[#FDD26E] text-[#003865]">CSV</button>
+  </div>
+
+  <!-- Tabla -->
+  <div class="overflow-x-auto bg-white rounded-lg shadow">
+    <table class="min-w-full text-sm">
+      <thead class="bg-gray-50 text-[#003865]">
+        <tr>
+          <th class="px-4 py-2 text-left">Nombre</th>
+          <th class="px-4 py-2 text-left">Firmante</th>
+          <th class="px-4 py-2 text-left">Fecha</th>
+          <th class="px-4 py-2 text-left">Remitente</th>
+          <th class="px-4 py-2 text-left">Estado</th>
+          <th class="px-4 py-2 text-left">Firma</th>
+          <th class="px-4 py-2 text-left">Documentos</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let s of sobresView" class="border-t">
+          <td class="px-4 py-2">{{s.nombre}}</td>
+          <td class="px-4 py-2">{{s.firmante}}</td>
+          <td class="px-4 py-2">{{s.fecha}}</td>
+          <td class="px-4 py-2">{{s.remitente}}</td>
+          <td class="px-4 py-2">
+            <span class="px-2 py-1 rounded text-white text-xs font-medium"
+              [ngClass]="{
+                'bg-[#00C1D4]': s.estado==='En Proceso',
+                'bg-green-600': s.estado==='Finalizado',
+                'bg-red-600': s.estado==='Rechazado',
+                'bg-yellow-600': s.estado==='Caducado',
+                'bg-blue-900': s.estado==='Cancelado'
+              }">
+              {{s.estado}}
+            </span>
+          </td>
+          <td class="px-4 py-2">{{s.firma}}</td>
+          <td class="px-4 py-2">{{s.documentos}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Paginación -->
+  <div class="flex justify-center mt-4 gap-2 items-center">
+    <button (click)="changePage(currentPage-1)" [disabled]="currentPage===1"
+      class="px-3 py-1 rounded border">«</button>
+
+    <ng-container *ngFor="let p of [currentPage, currentPage+1, currentPage+2]">
+      <button *ngIf="p <= totalPages"
+        (click)="changePage(p)"
+        [class.bg-[#00C1D4]]="currentPage===p"
+        [class.text-white]="currentPage===p"
+        class="px-3 py-1 rounded border">
+        {{p}}
+      </button>
+    </ng-container>
+
+    <button (click)="changePage(currentPage+1)" [disabled]="currentPage===totalPages"
+      class="px-3 py-1 rounded border">»</button>
+  </div>
 </section>
