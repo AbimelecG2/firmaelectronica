@@ -1,10 +1,106 @@
-<section aria-labelledby="certificados-title" class="max-w-6xl mx-auto">
+<section class="max-w-7xl mx-auto">
   <header class="mb-6">
-    <h1 id="certificados-title" class="text-3xl font-semibold text-[#003865]">Certificados</h1>
-    <p class="text-gray-600">Descripción breve de la sección Certificados.</p>
+    <h1 class="text-3xl font-semibold text-[#003865]">Certificados</h1>
+    <p class="text-gray-600">Gestión y estado de los certificados.</p>
   </header>
 
-  <article class="bg-white p-4 rounded-lg shadow">
-    <p class="text-gray-700">Contenido inicial de Certificados.</p>
-  </article>
+  <!-- Buscador -->
+  <div class="flex items-center gap-2 mb-4">
+    <input [(ngModel)]="searchTerm" (input)="applyFilters()"
+      placeholder="Buscar por cliente..."
+      class="flex-1 px-3 py-2 border rounded-lg border-[#00C1D4] focus:outline-none focus:ring-2 focus:ring-[#00C1D4]" />
+    <button class="p-2 text-[#00C1D4]"><i class="fa fa-search"></i></button>
+  </div>
+
+  <!-- Filtros -->
+  <div class="flex flex-wrap gap-2 mb-4">
+    <select [(ngModel)]="filterOperador" (change)="applyFilters()" class="px-2 py-1 rounded border">
+      <option value="">Operador</option>
+      <option *ngFor="let o of operadores" [value]="o">{{o}}</option>
+    </select>
+    <select [(ngModel)]="filterEstado" (change)="applyFilters()" class="px-2 py-1 rounded border">
+      <option value="">Estado</option>
+      <option *ngFor="let e of estados" [value]="e">{{e}}</option>
+    </select>
+    <select [(ngModel)]="filterTipo" (change)="applyFilters()" class="px-2 py-1 rounded border">
+      <option value="">Tipo</option>
+      <option *ngFor="let t of tipos" [value]="t">{{t}}</option>
+    </select>
+    <select [(ngModel)]="filterTel" (change)="applyFilters()" class="px-2 py-1 rounded border">
+      <option value="">Operadora</option>
+      <option value="TIGO">TIGO</option>
+      <option value="CLARO">CLARO</option>
+    </select>
+
+    <!-- Fechas -->
+    <input type="date" [(ngModel)]="startDate" (change)="applyFilters()" class="px-2 py-1 rounded border" />
+    <input type="date" [(ngModel)]="endDate" (change)="applyFilters()" class="px-2 py-1 rounded border" />
+
+    <button (click)="clearFilters()" class="px-3 py-1 rounded bg-gray-200 text-gray-800">Quitar filtros</button>
+
+    <!-- Exportar -->
+    <button (click)="exportPDF()" class="px-3 py-1 rounded bg-[#00C1D4] text-white">PDF</button>
+    <button (click)="exportXLSX()" class="px-3 py-1 rounded bg-[#FFB81C] text-white">Excel</button>
+    <button (click)="exportCSV()" class="px-3 py-1 rounded bg-[#FDD26E] text-[#003865]">CSV</button>
+  </div>
+
+  <!-- Tabla -->
+  <div class="overflow-x-auto bg-white rounded-lg shadow">
+    <table class="min-w-full text-sm">
+      <thead class="bg-gray-50 text-[#003865]">
+        <tr>
+          <th class="px-4 py-2 text-left">Cliente</th>
+          <th class="px-4 py-2 text-left">Certificado</th>
+          <th class="px-4 py-2 text-left">Operador</th>
+          <th class="px-4 py-2 text-left">Tipo</th>
+          <th class="px-4 py-2 text-left">Estado</th>
+          <th class="px-4 py-2 text-left">ScratchCard</th>
+          <th class="px-4 py-2 text-left">DNI</th>
+          <th class="px-4 py-2 text-left">Telefono</th>
+          <th class="px-4 py-2 text-left">Emisión</th>
+          <th class="px-4 py-2 text-left">Vencimiento</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let c of certsView" class="border-t">
+          <td class="px-4 py-2">{{c.cliente}}</td>
+          <td class="px-4 py-2">{{c.numero}}</td>
+          <td class="px-4 py-2">{{c.operador}}</td>
+          <td class="px-4 py-2">{{c.tipo}}</td>
+          <td class="px-4 py-2">
+            <span class="px-2 py-1 rounded text-white text-xs font-medium"
+              [ngClass]="{
+                'bg-[#00C1D4]': c.estado==='En Proceso',
+                'bg-green-600': c.estado==='Finalizado',
+                'bg-red-600': c.estado==='Rechazado',
+                'bg-yellow-600': c.estado==='Caducado',
+                'bg-blue-900': c.estado==='Cancelado'
+              }">
+              {{c.estado}}
+            </span>
+          </td>
+          <td class="px-4 py-2">{{c.scratch}}</td>
+          <td class="px-4 py-2">{{c.dni}}</td>
+          <td class="px-4 py-2">{{c.telefono}}</td>
+          <td class="px-4 py-2">{{c.fechaEmision}}</td>
+          <td class="px-4 py-2">{{c.fechaVencimiento}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Paginación -->
+  <div class="flex justify-center mt-4 gap-2 items-center">
+    <button (click)="changePage(currentPage-1)" [disabled]="currentPage===1" class="px-3 py-1 rounded border">«</button>
+    <ng-container *ngFor="let p of [currentPage, currentPage+1, currentPage+2]">
+      <button *ngIf="p <= totalPages"
+        (click)="changePage(p)"
+        [class.bg-[#00C1D4]]="currentPage===p"
+        [class.text-white]="currentPage===p"
+        class="px-3 py-1 rounded border">
+        {{p}}
+      </button>
+    </ng-container>
+    <button (click)="changePage(currentPage+1)" [disabled]="currentPage===totalPages" class="px-3 py-1 rounded border">»</button>
+  </div>
 </section>
