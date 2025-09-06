@@ -10,12 +10,16 @@ import { ReportesComponent } from './features/app-dashboard/views/reportes/repor
 import { AnalisisComponent } from './features/app-dashboard/views/analisis/analisis.component';
 import { AjustesComponent } from './features/app-dashboard/views/ajustes/ajustes.component';
 import { AyudaComponent } from './features/app-dashboard/views/ayuda/ayuda.component';
+import { ResetPasswordComponent } from './core/auth/reset-password/reset-password.component'; // 👈 Import nuevo
 
 export const routes: Routes = [
   //{ path: '', redirectTo: 'inicio', pathMatch: 'full' },
   { path: '', redirectTo: 'login', pathMatch: 'full' },
 
   { path: 'login', component: LoginComponent },
+
+  // 👇 Nueva ruta para restablecer contraseña
+  { path: 'reset-password', component: ResetPasswordComponent },
 
   {
     path: 'inicio',
@@ -29,7 +33,7 @@ export const routes: Routes = [
       { path: 'reportes', component: ReportesComponent },
       { path: 'analisis', component: AnalisisComponent },
       { path: 'ajustes', component: AjustesComponent },
-      { path: 'ayuda', component: AyudaComponent }
+      { path: 'ayuda', component: AyudaComponent },
     ]
   },
 

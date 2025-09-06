@@ -1,10 +1,109 @@
-<section aria-labelledby="firmantes-title" class="max-w-6xl mx-auto">
+<section aria-labelledby="firmantes-title" class="max-w-7xl mx-auto">
   <header class="mb-6">
     <h1 id="firmantes-title" class="text-3xl font-semibold text-[#003865]">Firmantes</h1>
-    <p class="text-gray-600">Descripción breve de la sección Firmantes.</p>
+    <p class="text-gray-600">Gestión y detalle de los firmantes registrados.</p>
   </header>
 
-  <article class="bg-white p-4 rounded-lg shadow">
-    <p class="text-gray-700">Contenido inicial de Firmantes.</p>
-  </article>
+  <!-- Buscador -->
+  <div class="flex items-center gap-2 mb-4">
+    <input [(ngModel)]="searchTerm" (input)="applyFilters()"
+      placeholder="Buscar por nombre..."
+      class="flex-1 px-3 py-2 border rounded-lg border-[#00C1D4] focus:outline-none focus:ring-2 focus:ring-[#00C1D4]" />
+    <button class="p-2 text-[#00C1D4]"><i class="fa fa-search"></i></button>
+  </div>
+
+  <!-- Filtros -->
+  <div class="flex flex-wrap gap-2 mb-4">
+    <!-- Ordenar -->
+    <button (click)="sortMode='az';applyFilters()" 
+            [class.bg-[#00C1D4]]="sortMode==='az'"
+            [class.text-white]="sortMode==='az'"
+            class="px-3 py-1 rounded border">A-Z</button>
+    <button (click)="sortMode='za';applyFilters()" 
+            [class.bg-[#00C1D4]]="sortMode==='za'"
+            [class.text-white]="sortMode==='za'"
+            class="px-3 py-1 rounded border">Z-A</button>
+
+    <!-- Operadora -->
+    <select [(ngModel)]="filterOperadora" (change)="applyFilters()" class="px-2 py-1 rounded border">
+      <option value="">Operadora</option>
+      <option value="TIGO">TIGO</option>
+      <option value="CLARO">CLARO</option>
+    </select>
+
+    <!-- Proceso -->
+    <select [(ngModel)]="filterProceso" (change)="applyFilters()" class="px-2 py-1 rounded border">
+      <option value="">Proceso</option>
+      <option *ngFor="let p of procesos" [value]="p">{{p}}</option>
+    </select>
+
+    <!-- Fechas -->
+    <input type="date" [(ngModel)]="startDate" (change)="applyFilters()" class="px-2 py-1 rounded border" />
+    <input type="date" [(ngModel)]="endDate" (change)="applyFilters()" class="px-2 py-1 rounded border" />
+
+    <!-- Borrar filtros -->
+    <button (click)="clearFilters()" class="px-3 py-1 rounded bg-gray-200 text-gray-800">Quitar filtros</button>
+
+    <!-- Exportaciones -->
+    <button (click)="exportPDF()" class="px-3 py-1 rounded bg-[#00C1D4] text-white">PDF</button>
+    <button (click)="exportXLSX()" class="px-3 py-1 rounded bg-[#FFB81C] text-white">Excel</button>
+    <button (click)="exportCSV()" class="px-3 py-1 rounded bg-[#FDD26E] text-[#003865]">CSV</button>
+  </div>
+
+  <!-- Tabla -->
+  <div class="overflow-x-auto bg-white rounded-lg shadow">
+    <table class="min-w-full text-sm">
+      <thead class="bg-gray-50 text-[#003865]">
+        <tr>
+          <th class="px-4 py-2 text-left">Nombres</th>
+          <th class="px-4 py-2 text-left">Apellidos</th>
+          <th class="px-4 py-2 text-left">Email</th>
+          <th class="px-4 py-2 text-left">Teléfono</th>
+          <th class="px-4 py-2 text-left">DNI</th>
+          <th class="px-4 py-2 text-left">Firmas</th>
+          <th class="px-4 py-2 text-left">Documentos</th>
+          <th class="px-4 py-2 text-left">Fecha</th>
+          <th class="px-4 py-2 text-left">Pruebas de vida</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let f of firmantesView" class="border-t">
+          <td class="px-4 py-2">{{f.nombres}}</td>
+          <td class="px-4 py-2">{{f.apellidos}}</td>
+          <td class="px-4 py-2">{{f.email}}</td>
+          <td class="px-4 py-2">{{f.telefono}}</td>
+          <td class="px-4 py-2">{{f.dni}}</td>
+          <td class="px-4 py-2">{{f.cantidadFirmas}}</td>
+          <td class="px-4 py-2">{{f.documentosFirmados}}</td>
+          <td class="px-4 py-2">{{f.fecha}}</td>
+          <td class="px-4 py-2">
+            <div class="flex gap-2">
+              <img [src]="f.pruebasVida.anverso" alt="DNI Anverso" class="w-10 h-10 rounded border" />
+              <img [src]="f.pruebasVida.reverso" alt="DNI Reverso" class="w-10 h-10 rounded border" />
+              <img [src]="f.pruebasVida.selfie" alt="Selfie con DNI" class="w-10 h-10 rounded border" />
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Paginación -->
+  <div class="flex justify-center mt-4 gap-2 items-center">
+    <button (click)="changePage(currentPage-1)" [disabled]="currentPage===1"
+      class="px-3 py-1 rounded border">«</button>
+
+    <ng-container *ngFor="let p of [currentPage, currentPage+1, currentPage+2]">
+      <button *ngIf="p <= totalPages"
+        (click)="changePage(p)"
+        [class.bg-[#00C1D4]]="currentPage===p"
+        [class.text-white]="currentPage===p"
+        class="px-3 py-1 rounded border">
+        {{p}}
+      </button>
+    </ng-container>
+
+    <button (click)="changePage(currentPage+1)" [disabled]="currentPage===totalPages"
+      class="px-3 py-1 rounded border">»</button>
+  </div>
 </section>
