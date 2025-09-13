@@ -1,10 +1,105 @@
-<section aria-labelledby="reportes-title" class="max-w-6xl mx-auto">
+<section class="max-w-7xl mx-auto">
   <header class="mb-6">
-    <h1 id="reportes-title" class="text-3xl font-semibold text-[#003865]">Reportes</h1>
-    <p class="text-gray-600">Descripción breve de la sección Reportes.</p>
+    <h1 class="text-3xl font-semibold text-[#003865]">Reportes</h1>
+    <p class="text-gray-600">Selecciona un tipo de reporte y aplica filtros para analizar la información.</p>
   </header>
 
-  <article class="bg-white p-4 rounded-lg shadow">
-    <p class="text-gray-700">Contenido inicial de Reportes.</p>
-  </article>
+  <!-- Botones de tipo de reporte -->
+  <div class="mb-4">
+    <p class="font-semibold text-[#003865] mb-2">Tipo de Reportes:</p>
+    <div class="flex flex-wrap gap-2">
+      <button (click)="changeReport('general')"
+        [ngClass]="currentReport==='general' ? 'bg-white text-[#003865] border border-[#003865]' : 'bg-[#003865] text-white'"
+        class="px-3 py-1 rounded">
+        General
+      </button>
+      <button (click)="changeReport('sobres')"
+        [ngClass]="currentReport==='sobres' ? 'bg-white text-[#003865] border border-[#003865]' : 'bg-[#003865] text-white'"
+        class="px-3 py-1 rounded">
+        Sobres
+      </button>
+      <button (click)="changeReport('firmantes')"
+        [ngClass]="currentReport==='firmantes' ? 'bg-white text-[#003865] border border-[#003865]' : 'bg-[#003865] text-white'"
+        class="px-3 py-1 rounded">
+        Firmantes
+      </button>
+      <button (click)="changeReport('certificados')"
+        [ngClass]="currentReport==='certificados' ? 'bg-white text-[#003865] border border-[#003865]' : 'bg-[#003865] text-white'"
+        class="px-3 py-1 rounded">
+        Certificados
+      </button>
+      <button (click)="changeReport('comparativo')"
+        [ngClass]="currentReport==='comparativo' ? 'bg-white text-[#003865] border border-[#003865]' : 'bg-[#003865] text-white'"
+        class="px-3 py-1 rounded">
+        Comparativo
+      </button>
+      <button (click)="changeReport('auditoria')"
+        [ngClass]="currentReport==='auditoria' ? 'bg-white text-[#003865] border border-[#003865]' : 'bg-[#003865] text-white'"
+        class="px-3 py-1 rounded">
+        Auditoría
+      </button>
+    </div>
+  </div>
+
+  <!-- Botones de exportación (SIEMPRE visibles, debajo de tipo de reporte) -->
+  <div class="flex gap-2 mb-6">
+    <button (click)="exportPDF()" class="px-3 py-1 rounded bg-[#00C1D4] text-white">PDF</button>
+    <button (click)="exportXLSX()" class="px-3 py-1 rounded bg-[#FFB81C] text-white">Excel</button>
+    <button (click)="exportCSV()" class="px-3 py-1 rounded bg-[#FDD26E] text-[#003865]">CSV</button>
+  </div>
+
+  <!-- Filtros (ocultar en comparativo) -->
+  <div *ngIf="currentReport!=='comparativo'" class="flex flex-wrap gap-2 mb-4 items-center">
+    <input [(ngModel)]="searchTerm" (input)="applyFilters()" placeholder="Buscar..."
+      class="flex-1 px-3 py-2 border rounded-lg border-[#00C1D4] focus:outline-none focus:ring-2 focus:ring-[#00C1D4]" />
+
+    <select [(ngModel)]="filterEstado" (change)="applyFilters()" class="px-2 py-1 rounded border">
+      <option value="">Estado</option>
+      <option *ngFor="let e of estados" [value]="e">{{e}}</option>
+    </select>
+
+    <select [(ngModel)]="filterRemitente" (change)="applyFilters()" class="px-2 py-1 rounded border">
+      <option value="">Remitente</option>
+      <option *ngFor="let r of remitentes" [value]="r">{{r}}</option>
+    </select>
+
+    <input type="date" [(ngModel)]="startDate" (change)="applyFilters()" class="px-2 py-1 rounded border" />
+    <input type="date" [(ngModel)]="endDate" (change)="applyFilters()" class="px-2 py-1 rounded border" />
+
+    <button (click)="clearFilters()" class="px-3 py-1 rounded bg-gray-200 text-gray-800">Quitar filtros</button>
+  </div>
+
+  <!-- Tabla -->
+  <div class="overflow-x-auto bg-white rounded-lg shadow">
+    <table class="min-w-full text-sm">
+      <thead class="bg-gray-50 text-[#003865]">
+        <tr>
+          <th *ngFor="let col of columns" class="px-4 py-2 text-left">{{col | titlecase}}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let r of reportsView" class="border-t">
+          <td *ngFor="let col of columns" class="px-4 py-2">{{r[col]}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Paginación (no en comparativo) -->
+  <div *ngIf="currentReport!=='comparativo'" class="flex justify-center mt-4 gap-2 items-center">
+    <button (click)="changePage(currentPage-1)" [disabled]="currentPage===1"
+      class="px-3 py-1 rounded border">«</button>
+
+    <ng-container *ngFor="let p of [currentPage, currentPage+1, currentPage+2]">
+      <button *ngIf="p <= totalPages"
+        (click)="changePage(p)"
+        [ngClass]="{'bg-[#00C1D4] text-white': currentPage===p}"
+        class="px-3 py-1 rounded border">
+        {{p}}
+      </button>
+    </ng-container>
+
+    <button (click)="changePage(currentPage+1)" [disabled]="currentPage===totalPages"
+      class="px-3 py-1 rounded border">»</button>
+  </div>
 </section>

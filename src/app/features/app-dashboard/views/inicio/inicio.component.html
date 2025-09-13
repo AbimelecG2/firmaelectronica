@@ -1,25 +1,55 @@
-<main class="main-content" role="main" aria-label="Reporte Digital">
-  <h1 class="report-title font-semibold text-4xl text-[#003865]">Reporte Digital</h1>
-  <div class="flex justify-center items-center gap-8 min-h-screen" role="region" aria-label="Panel de reportes">
-  <!-- Card 1 -->
-  <div  class="h-80 w-[300px] border border-[#00c1d4] rounded-2xl shadow-[0_10px_10px_-5px_rgba(0,0,0,0.3)]" role="figure" aria-label="Gráfico de Sobres de eSing AnyWhere">
-    <div class="bar-chart" id="barChart" aria-label="Gráfico de barras"></div>
-    <h3 class="px-1 mx-4 text-[#003865]">Sobres de eSing AnyWhere</h3>
-  </div>
+<main class="main-content flex flex-col justify-center items-center" role="main" aria-label="Inicio Firma Digital">
+  <!-- Logo -->
+  <img src="assets/logo-firma.png" alt="Logo Firma Digital" class="w-100 mb-7" />
 
-  <!-- Card 2 -->
-  <div class="h-80 w-[300px] border border-[#00c1d4] rounded-2xl shadow-[0_10px_10px_-5px_rgba(0,0,0,0.3)]" role="figure" aria-label="Gráfico de Certificados de Uanata">
-    <div class="pie-chart" id="pieChart" aria-label="Gráfico de pastel"></div>
-    <h3 class="px-1 mx-4 text-[#003865]">Certificados de Uanata</h3>
-  </div>
+  <!-- Título -->
+  <h1 class="report-title font-semibold text-4xl text-[#003865] mb-6">Bienvenidos</h1>
 
-  <!-- Card 3 -->
-  <div class="h-80 w-[300px] border border-[#00c1d4] rounded-2xl shadow-[0_10px_10px_-5px_rgba(0,0,0,0.3)]" role="figure" aria-label="Total de Firmas Realizadas">
-    <div class="number-card" aria-live="polite">
-      <span>{{ totalFirmas }}</span>
-    </div>
-    <h3 class="px-1 mx-4 text-[#003865]">Total de Firmas Realizadas</h3>
-  </div>
-</div>
+  <!-- Separador -->
+  <div aria-hidden="true" class="h-px bg-[#ffd26e] rounded-full mb-10 w-3/4"></div>
 
+  <!-- Grid de tarjetas -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+    <!-- Card 1 - Sobres -->
+    <a routerLink="/inicio/sobres"
+       class="card group"
+       role="link"
+       aria-label="Ir a Sobres">
+      <div class="icon bg-[#00C1D4] text-white group-hover:scale-110">
+        <i class="fa-solid fa-envelope text-4xl"></i>
+      </div>
+      <div class="content">
+        <h3 class="title">Sobres eSAW</h3>
+        <p class="number">{{ totalSobres }}</p>
+      </div>
+    </a>
+
+    <!-- Card 2 - Certificados -->
+    <a routerLink="/inicio/certificados"
+       class="card group"
+       role="link"
+       aria-label="Ir a Certificados">
+      <div class="icon bg-[#FFB81C] text-[#003865] group-hover:scale-110">
+        <i class="fa-solid fa-certificate text-4xl"></i>
+      </div>
+      <div class="content">
+        <h3 class="title">Certificados Uanataca</h3>
+        <p class="number">{{ totalCertificados }}</p>
+      </div>
+    </a>
+
+    <!-- Card 3 - Firmas -->
+    <a routerLink="/inicio/firmantes"
+       class="card group"
+       role="link"
+       aria-label="Ir a Firmantes">
+      <div class="icon bg-[#28a745] text-white group-hover:scale-110">
+        <i class="fa-solid fa-signature text-4xl"></i>
+      </div>
+      <div class="content">
+        <h3 class="title">Firmas realizadas</h3>
+        <p class="number">{{ totalFirmas }}</p>
+      </div>
+    </a>
+  </div>
 </main>
