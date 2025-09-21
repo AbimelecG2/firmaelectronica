@@ -1,20 +1,19 @@
 import { Component, HostListener, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms'; // 👈 para usar ngModel
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ManualesService } from '@app/core/services/manuales.service';
-
-
 
 type ManualCard = {
   fileName: string;
   displayName: string;
-  url: string; // download URL de Firebase Storage
+  url: string;
 };
 
 @Component({
   selector: 'app-ayuda',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './ayuda.component.html',
   styleUrls: ['./ayuda.component.css']
 })
@@ -34,9 +33,15 @@ export class AyudaComponent implements OnInit {
   selectedUrl = '';
   selectedUrlSafe: SafeResourceUrl | null = null;
 
+  // Comentarios
+  userComment = '';
+  sending = false;
+  successMsg = '';
+  errorMsg = '';
+
   async ngOnInit(): Promise<void> {
     try {
-      const items = await this.manualesSrv.list('manuales'); // carpeta en Storage
+      const items = await this.manualesSrv.list('manuales');
       this.manuals = items.map(m => ({
         fileName: m.name,
         displayName: this.toTitle(m.name),
@@ -78,5 +83,29 @@ export class AyudaComponent implements OnInit {
       .replace(/\s+/g, ' ')
       .trim()
       .replace(/\w\S*/g, (t) => t[0].toUpperCase() + t.slice(1));
+  }
+
+  // 👉 Método para enviar comentarios
+  async sendComment() {
+    this.successMsg = '';
+    this.errorMsg = '';
+
+    if (!this.userComment.trim()) {
+      this.errorMsg = 'Por favor, escribe un comentario antes de enviarlo.';
+      return;
+    }
+
+    this.sending = true;
+    try {
+      // Aquí simulo el envío. Podés integrarlo a Firebase/Email/Backend
+      await new Promise(resolve => setTimeout(resolve, 1500));
+
+      this.successMsg = '¡Tu comentario se envió con éxito! ✅';
+      this.userComment = '';
+    } catch (e) {
+      this.errorMsg = 'Ocurrió un error al enviar tu comentario.';
+    } finally {
+      this.sending = false;
+    }
   }
 }
