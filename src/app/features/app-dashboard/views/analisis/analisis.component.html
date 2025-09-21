@@ -1,10 +1,93 @@
-<section aria-labelledby="analisis-title" class="max-w-6xl mx-auto">
-  <header class="mb-6">
-    <h1 id="analisis-title" class="text-3xl font-semibold text-[#003865]">Analisis</h1>
-    <p class="text-gray-600">Descripción breve de la sección Analisis.</p>
+<section class="max-w-7xl mx-auto">
+  <!-- Header principal -->
+  <header class="mb-6 text-center">
+    <h1 class="text-3xl font-semibold text-[#003865]">Análisis</h1>
+    <p class="text-gray-600">Métricas clave de sobres, certificados y firmantes.</p>
   </header>
 
-  <article class="bg-white p-4 rounded-lg shadow">
-    <p class="text-gray-700">Contenido inicial de Analisis.</p>
-  </article>
+  <!-- 🔹 Barra de filtros -->
+  <div class="bg-white p-4 rounded-lg shadow mb-10 flex flex-wrap gap-4 items-end">
+    <div>
+      <label class="block text-sm font-medium text-gray-700">Proceso</label>
+      <select [(ngModel)]="filtroProceso" class="border rounded px-3 py-1">
+        <option value="">Todos</option>
+        <option *ngFor="let p of procesos" [value]="p">{{ p }}</option>
+      </select>
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700">Estado</label>
+      <select [(ngModel)]="filtroEstado" class="border rounded px-3 py-1">
+        <option value="">Todos</option>
+        <option *ngFor="let e of estados" [value]="e">{{ e }}</option>
+      </select>
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700">Remitente</label>
+      <select [(ngModel)]="filtroRemitente" class="border rounded px-3 py-1">
+        <option value="">Todos</option>
+        <option *ngFor="let r of remitentes" [value]="r">{{ r }}</option>
+      </select>
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700">Desde</label>
+      <input type="date" [(ngModel)]="fechaInicio" class="border rounded px-3 py-1">
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700">Hasta</label>
+      <input type="date" [(ngModel)]="fechaFin" class="border rounded px-3 py-1">
+    </div>
+    <button (click)="applyFilters()" class="bg-[#003865] text-white px-4 py-2 rounded">Aplicar</button>
+    <button (click)="clearFilters()" class="bg-gray-300 text-[#003865] px-4 py-2 rounded">Limpiar</button>
+  </div>
+
+  <!-- Grid de gráficos -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <!-- 1. Sobres por Estado -->
+    <div class="bg-white p-4 rounded-lg shadow h-80">
+      <h3 class="text-[#003865] font-semibold mb-2">Sobres por Estado</h3>
+      <canvas baseChart [data]="chartEstados" [type]="'doughnut'" [options]="chartOptions"></canvas>
+    </div>
+
+    <!-- 2. Sobres por Operador -->
+    <div class="bg-white p-4 rounded-lg shadow h-80">
+      <h3 class="text-[#003865] font-semibold mb-2">Sobres por Operador</h3>
+      <canvas baseChart [data]="chartOperadores" [type]="'bar'" [options]="chartOptions"></canvas>
+    </div>
+
+    <!-- 3. Evolución mensual -->
+    <div class="bg-white p-4 rounded-lg shadow h-80">
+      <h3 class="text-[#003865] font-semibold mb-2">Evolución Mensual</h3>
+      <canvas baseChart [data]="chartMensual" [type]="'line'" [options]="chartOptions"></canvas>
+    </div>
+
+    <!-- 4. Certificados activos vs caducados -->
+    <div class="bg-white p-4 rounded-lg shadow h-80">
+      <h3 class="text-[#003865] font-semibold mb-2">Certificados</h3>
+      <canvas baseChart [data]="chartCertificados" [type]="'bar'" [options]="chartOptions"></canvas>
+    </div>
+
+    <!-- 5. Firmantes más activos -->
+    <div class="bg-white p-4 rounded-lg shadow h-80">
+      <h3 class="text-[#003865] font-semibold mb-2">Top 10 Firmantes</h3>
+      <canvas baseChart [data]="chartFirmantes" [type]="'bar'" [options]="chartOptions"></canvas>
+    </div>
+
+    <!-- 6. Comparativa de procesos -->
+    <div class="bg-white p-4 rounded-lg shadow h-80 md:col-span-2">
+      <h3 class="text-[#003865] font-semibold mb-2">Comparativa de Procesos por Mes</h3>
+      <canvas baseChart [data]="chartProcesos" [type]="'bar'" [options]="chartOptions"></canvas>
+    </div>
+
+    <!-- 7. Firmas por tipo -->
+    <div class="bg-white p-4 rounded-lg shadow h-80">
+      <h3 class="text-[#003865] font-semibold mb-2">Firmas por Tipo</h3>
+      <canvas baseChart [data]="chartFirmasTipo" [type]="'pie'" [options]="chartOptions"></canvas>
+    </div>
+
+    <!-- 8. Heatmap (días de la semana) -->
+    <div class="bg-white p-4 rounded-lg shadow h-80">
+      <h3 class="text-[#003865] font-semibold mb-2">Sobres por Día de la Semana</h3>
+      <canvas baseChart [data]="chartHeatmap" [type]="'bar'" [options]="chartOptions"></canvas>
+    </div>
+  </div>
 </section>
