@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 
@@ -22,7 +22,7 @@ type MenuItem = {
   templateUrl: './menulateral.component.html',
   styleUrls: ['./menulateral.component.css']
 })
-export class MenulateralComponent implements OnInit {
+export class MenulateralComponent implements OnInit, OnDestroy {
   private usersSrv = inject(UsersService);
   private authSrv = inject(AuthService);
   private router = inject(Router);
@@ -47,15 +47,30 @@ export class MenulateralComponent implements OnInit {
 
   ngOnInit(): void {
    
-    this.sub = this.usersSrv.observeMyProfile().subscribe(me => {
-      if (me) {
-        this.userName = `${me.firstName ?? ''} ${me.lastName ?? ''}`.trim() || me.email || 'Usuario';
-        this.photoURL = me.photoURL || 'assets/avatar.png';
-      } else {
-        this.userName = 'Usuario';
-        this.photoURL = 'assets/avatar.png';
+    this.sub = this.usersSrv.observeMyProfile().subscribe({
+      next: (me) => {
+        if (me) {
+          // Solo actualizar si hay datos válidos
+          this.userName = `${me.firstName ?? ''} ${me.lastName ?? ''}`.trim() || me.email || 'Usuario';
+          if (me.photoURL && me.photoURL.trim() !== '') {
+            this.photoURL = me.photoURL;
+          } else {
+            this.photoURL = 'assets/avatar.png';
+          }
+        }
+        // Si me es null, NO limpiar los valores, mantener los que ya tenemos
+      },
+      error: () => {
+        // En caso de error, mantener la información que ya tenemos visible
+      },
+      complete: () => {
+        // Al completar, mantener la información que ya tenemos
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    this.sub?.unsubscribe();
   }
 
   async onLogout(): Promise<void> {

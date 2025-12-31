@@ -1,9 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { FirebaseCrudService } from '../../../../core/services/firebase-crud.service';
+import { SweetAlert } from '../../../../core/services/sweet-alert';
+import { where } from '@angular/fire/firestore';
 
 interface Certificados {
   cliente: string;
@@ -26,6 +29,8 @@ interface Certificados {
   styleUrls: ['./certificados.component.css']
 })
 export class CertificadosComponent implements OnInit {
+  private firebaseCrud = inject(FirebaseCrudService);
+  private swal = inject(SweetAlert);
 
   allCerts: Certificados[] = [];
   certsView: Certificados[] = [];
@@ -48,60 +53,31 @@ export class CertificadosComponent implements OnInit {
   tipos = ['OneShot','Larga Duracion'];
   estados = ['En Proceso','Finalizado','Rechazado','Caducado','Cancelado'];
 
-  ngOnInit() {
-    this.generateCertificados(300);
-    this.applyFilters();
+  async ngOnInit() {
+    // Cargar todos los certificados de Firebase al iniciar
+    await this.loadCertificadosFromFirebase();
+    this.applyFiltersLocal();
   }
 
-  // ---------- Generador de datos ----------
-  generateCertificados(count: number) {
-    const nombres = ['Carlos','Ana','David','Lucia','Pedro','Sofia','Jorge','Elena','Marco','Laura','Luis','Paola','Andres','Marta','Gabriela','Jose','Rosa','Fernando','Gloria','Pablo','Adriana','Diego','Claudia','Raul','Isabel','Mario','Cristina','Hector','Patricia','Sandra','Camilo','Valeria','Esteban','Fabiola','Ramon','Lilian','Ricardo','Noelia','Sebastian','Angela','Martin','Daniela','Gustavo','Carmen','Eduardo','Vanessa','Felipe','Monica','Rodrigo','Karla','Manuel','Silvia','Tomas','Lorena','Mateo','Victoria','Oscar','Alejandra','Nestor','Elsa','Rafael','Roberto','Celeste','Ignacio','Mariana','Hilda','Kevin','Beatriz','Emilio','Diana','Samuel','Cecilia','Francisco','Teresa','Nicolas','Veronica','Hugo','Miriam','Joel','Luz','Milton','Carolina','Sergio','Cristian','Viviana','Alberto','Tatiana','Enrique','Camila','Jonathan','Yesenia','Ulises','Yolanda','Edwin','Natalia','Elias','Ruth','Daniel','Dayana','German','Pamela','Isidro','Flor','Rigoberto','Lionel','Melisa','Gerson','Victor','Omar','Armando','Clara','Alonso','Guillermo','Ernesto','Salvador','Jesus'];
-    const apellidos = ['Garcia','Galeas','Lopez','Perez','Torres','Martinez','Ramos','Castillo','Mendez','Alvarez','Gutierrez','Romero','Hernandez','Castro','Medina','Cruz','Mejia','Reyes','Ortiz','Morales','Pineda','Chavez','Flores','Aguilar','Vasquez','Sanchez','Contreras','Benitez','Zuniga','Guzman','Escobar','Carranza','Orellana','Rivas','Figueroa','Ayala','Murillo','Pacheco','Velasquez','Palma','Andino','Corrales','Carcamo','Acosta'];
-
-    this.operadores = [
-      'Abimelec Garcia Galeas',
-      'Carlos Lopez Ramirez','Ana Torres Gomez','David Martinez Castillo','Julissa Villalobos Carcamo',
-      'Lucia Ramos Perez','Pedro Castillo Mejia','Sofia Mendez Aguilar','Jorge Alvarez Flores','Elena Gutierrez Reyes',
-      'Marco Romero Ortiz','Laura Hernandez Morales','Luis Castillo Pineda','Paola Medina Sanchez','Andres Cruz Lopez',
-      'Marta Gonzalez Chavez','Gabriela Lopez Flores','Jose Martinez Mejia','Rosa Torres Benitez','Fernando Reyes Alvarez',
-      'Gloria Ortiz Contreras','Pablo Gutierrez Figueroa','Adriana Ramos Nolasco','Diego Fernandez Pineda','Claudia Castillo Guzman'
-    ];
-
-    const certs: Certificados[] = [];
-    const start = new Date(2025,0,1);
-    const end = new Date(2025,7,22);
-
-    for(let i=0;i<count;i++){
-      const cliente = `${this.pick(nombres)} ${this.pick(apellidos)} ${this.pick(apellidos)}`;
-      const numero = String(100000 + Math.floor(Math.random()*900000));
-      const operador = this.pick(this.operadores);
-      const tipo = this.pick(this.tipos);
-      const estado = this.randomWeighted(this.estados,[3,6,2,2,2]); // mayoría finalizados
-
-      const scratch = String(10000000 + Math.floor(Math.random()*90000000));
-      const dni = this.genDNI();
-      const telefono = this.genTel();
-
-      const fechaEmision = this.formatDate(this.randomWorkday(start,end));
-      let fechaVencimiento = '';
-      if(tipo==='OneShot'){
-        fechaVencimiento = this.addDays(fechaEmision,1);
-      } else {
-        fechaVencimiento = this.addYears(fechaEmision,1);
+    // ---------- Cargar datos reales desde Firebase ----------
+    async loadCertificadosFromFirebase(showLoading = true) {
+      if (showLoading) {
+        this.swal.loading('Cargando certificados...');
       }
-
-      // 👇 Aquí corregimos, usamos el mismo nombre de la interfaz
-      certs.push({cliente,numero,operador,tipo,estado,scratch,dni,telefono,fechaEmision,fechaVencimiento});
+      try {
+        // Cargar TODOS los certificados sin filtro
+        const certificados = await this.firebaseCrud.getAll<any>('certificados');
+        this.allCerts = certificados || [];
+        if (showLoading) {
+          this.swal.close();
+        }
+      } catch {
+        this.allCerts = [];
+        if (showLoading) {
+          this.swal.close();
+        }
+      }
     }
-
-    certs.sort((a,b)=>{
-      const [da,ma,ya] = a.fechaEmision.split('/').map(Number);
-      const [db,mb,yb] = b.fechaEmision.split('/').map(Number);
-      return new Date(2000+ya,ma-1,da).getTime() - new Date(2000+yb,mb-1,db).getTime();
-    });
-
-    this.allCerts = certs;
-  }
 
   // utilidades
   pick<T>(arr:T[]):T { return arr[Math.floor(Math.random()*arr.length)]; }
@@ -160,7 +136,8 @@ export class CertificadosComponent implements OnInit {
   }
 
   // -------- Filtros --------
-  applyFilters() {
+  // Filtra solo localmente sin recargar Firebase - para búsqueda instantánea
+  applyFiltersLocal() {
     let result = [...this.allCerts];
     if(this.searchTerm){
       result = result.filter(c=> c.cliente.toLowerCase().includes(this.searchTerm.toLowerCase()));
@@ -181,16 +158,23 @@ export class CertificadosComponent implements OnInit {
         result = result.filter(c=> c.telefono.startsWith('+5048') || c.telefono.startsWith('+5043'));
       }
     }
-    if(this.startDate && this.endDate){
-      result = result.filter(c=>{
-        const [d,m,y] = c.fechaEmision.split('/').map(Number);
-        const date = new Date(2000+y,m-1,d);
-        return date>=new Date(this.startDate!) && date<=new Date(this.endDate!);
-      });
-    }
     this.totalPages = Math.ceil(result.length/this.pageSize);
     this.currentPage = 1;
     this.certsView = result.slice(0,this.pageSize);
+  }
+
+  // Solo filtra localmente, sin recargar de Firebase
+  applyFilters() {
+    this.applyFiltersLocal();
+  }
+
+  changePage(p: number) {
+    if (p < 1 || p > this.totalPages) return;
+    this.currentPage = p;
+    const start = (p - 1) * this.pageSize;
+    const end = start + this.pageSize;
+    const filtered = this.getFiltered();
+    this.certsView = filtered.slice(start, end);
   }
 
   clearFilters(){
@@ -201,15 +185,7 @@ export class CertificadosComponent implements OnInit {
     this.filterTel = '';
     this.startDate = undefined;
     this.endDate = undefined;
-    this.applyFilters();
-  }
-
-  changePage(p:number){
-    this.currentPage = p;
-    const start = (p-1)*this.pageSize;
-    const end = start+this.pageSize;
-    const filtered = this.getFiltered();
-    this.certsView = filtered.slice(start,end);
+    this.applyFiltersLocal();
   }
 
   getFiltered(){
@@ -232,13 +208,6 @@ export class CertificadosComponent implements OnInit {
       } else {
         result = result.filter(c=> c.telefono.startsWith('+5048') || c.telefono.startsWith('+5043'));
       }
-    }
-    if(this.startDate && this.endDate){
-      result = result.filter(c=>{
-        const [d,m,y] = c.fechaEmision.split('/').map(Number);
-        const date = new Date(2000+y,m-1,d);
-        return date>=new Date(this.startDate!) && date<=new Date(this.endDate!);
-      });
     }
     return result;
   }
@@ -277,4 +246,5 @@ export class CertificadosComponent implements OnInit {
     });
     doc.save('certificados.pdf');
   }
+
 }

@@ -6,7 +6,7 @@
 
   <!-- Buscador -->
   <div class="flex items-center gap-2 mb-4">
-    <input [(ngModel)]="searchTerm" (input)="applyFilters()"
+    <input [(ngModel)]="searchTerm" (input)="applyFiltersLocal()"
       placeholder="Buscar por nombre..."
       class="flex-1 px-3 py-2 border rounded-lg border-[#00C1D4] focus:outline-none focus:ring-2 focus:ring-[#00C1D4]" />
     <button class="p-2 text-[#00C1D4]"><i class="fa fa-search"></i></button>
@@ -15,31 +15,31 @@
   <!-- Filtros -->
   <div class="flex flex-wrap gap-2 mb-4">
     <!-- Ordenar -->
-    <button (click)="sortMode='az';applyFilters()" 
+    <button (click)="sortMode='az';applyFiltersLocal()" 
             [class.bg-[#00C1D4]]="sortMode==='az'"
             [class.text-white]="sortMode==='az'"
             class="px-3 py-1 rounded border">A-Z</button>
-    <button (click)="sortMode='za';applyFilters()" 
+    <button (click)="sortMode='za';applyFiltersLocal()" 
             [class.bg-[#00C1D4]]="sortMode==='za'"
             [class.text-white]="sortMode==='za'"
             class="px-3 py-1 rounded border">Z-A</button>
 
     <!-- Operadora -->
-    <select [(ngModel)]="filterOperadora" (change)="applyFilters()" class="px-2 py-1 rounded border">
+    <select [(ngModel)]="filterOperadora" (change)="applyFiltersLocal()" class="px-2 py-1 rounded border">
       <option value="">Operadora</option>
       <option value="TIGO">TIGO</option>
       <option value="CLARO">CLARO</option>
     </select>
 
     <!-- Proceso -->
-    <select [(ngModel)]="filterProceso" (change)="applyFilters()" class="px-2 py-1 rounded border">
+    <select [(ngModel)]="filterProceso" (change)="applyFiltersLocal()" class="px-2 py-1 rounded border">
       <option value="">Proceso</option>
       <option *ngFor="let p of procesos" [value]="p">{{p}}</option>
     </select>
 
     <!-- Fechas -->
-    <input type="date" [(ngModel)]="startDate" (change)="applyFilters()" class="px-2 py-1 rounded border" />
-    <input type="date" [(ngModel)]="endDate" (change)="applyFilters()" class="px-2 py-1 rounded border" />
+    <input type="date" [(ngModel)]="startDate" class="px-2 py-1 rounded border" />
+    <input type="date" [(ngModel)]="endDate" class="px-2 py-1 rounded border" />
 
     <!-- Borrar filtros -->
     <button (click)="clearFilters()" class="px-3 py-1 rounded bg-gray-200 text-gray-800">Quitar filtros</button>

@@ -7,7 +7,7 @@
 
   <!-- Buscador -->
   <div class="flex items-center gap-2 mb-4">
-    <input [(ngModel)]="searchTerm" (input)="applyFilters()"
+    <input [(ngModel)]="searchTerm" (input)="applyFiltersLocal()"
       placeholder="Buscar sobre..."
       class="flex-1 px-3 py-2 border rounded-lg border-[#00C1D4] focus:outline-none focus:ring-2 focus:ring-[#00C1D4]" />
     <button class="p-2 text-[#00C1D4]"><i class="fa fa-search"></i></button>
@@ -15,26 +15,29 @@
 
   <!-- Controles -->
   <div class="flex flex-wrap gap-2 mb-4">
-    <select [(ngModel)]="filterProceso" (change)="applyFilters()" class="px-2 py-1 rounded border">
+    <select [(ngModel)]="filterProceso" (change)="applyFiltersLocal()" class="px-2 py-1 rounded border">
       <option value="">Proceso</option>
       <option *ngFor="let p of procesos" [value]="p">{{p}}</option>
     </select>
-    <select [(ngModel)]="filterRemitente" (change)="applyFilters()" class="px-2 py-1 rounded border">
+    <select [(ngModel)]="filterRemitente" (change)="applyFiltersLocal()" class="px-2 py-1 rounded border">
       <option value="">Remitente</option>
       <option *ngFor="let r of remitentes" [value]="r">{{r}}</option>
     </select>
-    <select [(ngModel)]="filterEstado" (change)="applyFilters()" class="px-2 py-1 rounded border">
+    <select [(ngModel)]="filterEstado" (change)="applyFiltersLocal()" class="px-2 py-1 rounded border">
       <option value="">Estado</option>
       <option *ngFor="let e of estados" [value]="e">{{e}}</option>
     </select>
-    <select [(ngModel)]="filterFirma" (change)="applyFilters()" class="px-2 py-1 rounded border">
+    <select [(ngModel)]="filterFirma" (change)="applyFiltersLocal()" class="px-2 py-1 rounded border">
       <option value="">Firma</option>
       <option *ngFor="let f of firmas" [value]="f">{{f}}</option>
     </select>
 
     <!-- Filtro fechas -->
-    <input type="date" [(ngModel)]="startDate" (change)="applyFilters()" class="px-2 py-1 rounded border" />
-    <input type="date" [(ngModel)]="endDate" (change)="applyFilters()" class="px-2 py-1 rounded border" />
+    <input type="date" [(ngModel)]="startDate" class="px-2 py-1 rounded border" />
+    <input type="date" [(ngModel)]="endDate" class="px-2 py-1 rounded border" />
+
+    <!-- Botón de búsqueda -->
+    <button (click)="applyFilters()" class="px-3 py-1 rounded bg-[#00C1D4] text-white">Buscar</button>
 
     <!-- Botón quitar filtros -->
     <button (click)="clearFilters()" class="px-3 py-1 rounded bg-gray-200 text-gray-800">Quitar filtros</button>

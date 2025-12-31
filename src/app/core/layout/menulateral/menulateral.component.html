@@ -7,7 +7,11 @@
 
     <div class="p-4 border-b flex flex-col items-center">
       <!-- Foto dinámica -->
-      <img [src]="photoURL" alt="Avatar de usuario" class="w-16 h-16 rounded-full mb-2 object-cover">
+      <img 
+        [src]="photoURL" 
+        (error)="photoURL = 'assets/avatar.png'"
+        alt="Avatar de usuario" 
+        class="w-16 h-16 rounded-full mb-2 object-cover">
       <!-- Nombre dinámico -->
       <p class="text-[#FDD26E] font-medium">{{ userName }}</p>
     </div>
